@@ -23,7 +23,7 @@ export class ThreadSpinner {
 	}
 	private options: Options;
 	private spinnerId = ThreadSpinner.uuid();
-	private text: string;
+	private currentText: string;
 
 	constructor(options: Options | string) {
 		if (ThreadSpinner.renderThread == null) {
@@ -35,14 +35,22 @@ export class ThreadSpinner {
 			body: options,
 		});
 		if (typeof options === "string") {
-			this.text = options;
+			this.currentText = options;
 		} else {
 			this.options = options;
 		}
 	}
 
+	public set text(val: string) {
+		this.currentText = val;
+		this.send({
+			type: "Text",
+			body: val,
+		});
+	}
+
 	public start(text?: string) {
-		this.text = text;
+		this.currentText = text;
 		ThreadSpinner.runningSpinners++;
 		this.send({
 			type: "Start",
@@ -51,7 +59,7 @@ export class ThreadSpinner {
 	}
 
 	public succeed(text?: string) {
-		this.text = text;
+		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
 		this.send({
 			type: "Succeed",
@@ -67,7 +75,7 @@ export class ThreadSpinner {
 	}
 
 	public fail(text?: string) {
-		this.text = text;
+		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
 		this.send({
 			type: "Fail",
@@ -76,7 +84,7 @@ export class ThreadSpinner {
 	}
 
 	public info(text?: string) {
-		this.text = text;
+		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
 		this.send({
 			type: "Info",
@@ -85,7 +93,7 @@ export class ThreadSpinner {
 	}
 
 	public warn(text?: string) {
-		this.text = text;
+		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
 		this.send({
 			type: "Warn",

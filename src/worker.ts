@@ -32,6 +32,9 @@ function handleMessage(msg: SpinnerMessageSerialized) {
 		case "Clear":
 			spinners[msg.spinId].clear();
 			break;
+		case "Text":
+			spinners[msg.spinId].text = msg.msg.body;
+			break;
 	}
 }
 

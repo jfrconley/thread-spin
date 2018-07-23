@@ -1,19 +1,30 @@
 {
-  "name": "thread-spin",
-  "version": "1.0.0",
-  "description": "Thread based, truly async spinner based on ora",
-  "main": "dist/threadspinner.js",
-  "typings": "dist/threadspinner.d.ts",
-  "author": "John Conley",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^10.5.2",
-    "@types/ora": "^1.3.4",
-    "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
-  },
-  "dependencies": {
-    "hyperid": "^1.4.1",
-    "ora": "^3.0.0"
-  }
+	"name": "thread-spin",
+	"version": "1.0.1",
+	"description": "Thread based, truly async spinner based on ora",
+	"main": "dist/threadspinner.js",
+	"typings": "dist/threadspinner.d.ts",
+	"author": "John Conley",
+	"license": "MIT",
+	"scripts": {
+		"build": "tsc",
+		"lint": "tslint --project .",
+		"prepare": "npm run build"
+	},
+	"repository": "https://github.com/jfrconley/thread-spin",
+	"files": [
+		"dist",
+		"package.json"
+	],
+	"devDependencies": {
+		"@types/node": "^10.5.2",
+		"@types/ora": "^1.3.4",
+		"tslint": "^5.11.0",
+		"typescript": "^2.9.2"
+	},
+	"dependencies": {
+		"hyperid": "^1.4.1",
+		"ora": "^3.0.0",
+		"thread-spin": "^1.0.0"
+	}
 }

@@ -129,6 +129,11 @@ export interface SpinnerPersist extends SpinnerMessageBase {
 	body?: PersistOptions;
 }
 
+export interface SpinnerText extends SpinnerMessageBase{
+	type: "Text";
+	body: string;
+}
+
 export interface SpinnerClear extends SpinnerMessageBase {
 	type: "Clear";
 }
@@ -147,7 +152,8 @@ export type SpinnerMessage =
 	| SpinnerInfo
 	| SpinnerWarn
 	| SpinnerPersist
-	| SpinnerClear;
+	| SpinnerClear
+	| SpinnerText;
 
 export interface SpinnerMessageSerialized {
 	msg: SpinnerMessage;

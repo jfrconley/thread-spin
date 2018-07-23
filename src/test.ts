@@ -19,16 +19,18 @@ stop = false;
 
 while (!stop) {
 	test += 0.01;
+	// spinner.text = test + "";
 	if (test >= 9999999) {
 		stop = true;
 		spinner.succeed("yay");
 	}
 }
 
-spinner = new ThreadSpinner({
-	text: "test spinner 2",
-});
-spinner.start();
+spinner.start("test spinner 2");
+// spinner = new ThreadSpinner({
+// 	text: "test spinner 2",
+// });
+// spinner.start();
 
 // new ThreadSpinner("other test").start();
 // ora("test spinner").start();
@@ -44,11 +46,12 @@ while (!stop) {
 	}
 }
 
-spinner = new ThreadSpinner({
-	text: "test spinner 3",
-	spinner: "earth",
-});
-spinner.start();
+spinner.start("test spinner 3");
+// spinner = new ThreadSpinner({
+// 	text: "test spinner 3",
+// 	spinner: "earth",
+// });
+// spinner.start();
 
 // new ThreadSpinner("other test").start();
 // ora("test spinner").start();
