@@ -153,7 +153,8 @@ export type SpinnerMessage =
 	| SpinnerWarn
 	| SpinnerPersist
 	| SpinnerClear
-	| SpinnerText;
+	| SpinnerText
+	| SpinnerAck;
 
 export interface SpinnerMessageSerialized {
 	msg: SpinnerMessage;

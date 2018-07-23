@@ -36,6 +36,11 @@ function handleMessage(msg: SpinnerMessageSerialized) {
 			spinners[msg.spinId].text = msg.msg.body;
 			break;
 	}
+	if (msg.msg.type !== "Create") {
+		msg.msg.type = "Ack";
+		delete msg.msg.body;
+		process.send(msg);
+	}
 }
 
 process.on("message", handleMessage);

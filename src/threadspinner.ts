@@ -1,5 +1,5 @@
 import child_process = require("child_process");
-import {Options, PersistOptions, SpinnerMessage, SpinnerPersist} from "./types";
+import {Options, PersistOptions, SpinnerMessage, SpinnerMessageSerialized, SpinnerPersist} from "./types";
 import {join} from "path";
 const hyperid = require("hyperid");
 
@@ -25,10 +25,10 @@ export class ThreadSpinner {
 	private spinnerId = ThreadSpinner.uuid();
 	private currentText: string;
 
-	constructor(options: Options | string) {
+	constructor(options?: Options | string) {
 		if (ThreadSpinner.renderThread == null) {
 			ThreadSpinner.renderThread = child_process.fork(join(__dirname, "worker.js"), ["IS_SPINNER_CHILD"]);
-			ThreadSpinner.checkClose();
+			// ThreadSpinner.checkClose();
 		}
 		this.send({
 			type: "Create",
@@ -49,73 +49,92 @@ export class ThreadSpinner {
 		});
 	}
 
-	public start(text?: string) {
+	public async start(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners++;
-		this.send({
+		await this.send({
 			type: "Start",
 			body: text,
 		});
 	}
 
-	public succeed(text?: string) {
+	public async succeed(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Succeed",
 			body: text,
 		});
 	}
 
-	public stop() {
+	public async stop() {
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Stop",
 		});
 	}
 
-	public fail(text?: string) {
+	public async fail(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Fail",
 			body: text,
 		});
 	}
 
-	public info(text?: string) {
+	public async info(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Info",
 			body: text,
 		});
 	}
 
-	public warn(text?: string) {
+	public async warn(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Warn",
 			body: text,
 		});
 	}
 
-	public persist(options?: PersistOptions) {
+	public async persist(options?: PersistOptions) {
 		ThreadSpinner.runningSpinners--;
-		this.send({
+		await this.send({
 			type: "Persist",
 			body: options,
 		});
 	}
 
-	private send(message: SpinnerMessage): string {
+	private send(message: SpinnerMessage): Promise<void> {
 		const id = ThreadSpinner.uuid();
-		ThreadSpinner.renderThread.send({
-			msg: message,
-			spinId: this.spinnerId,
-			reqId: id,
+		// console.log("sent", message.type, id);
+		if (message.type === "Create") {
+			ThreadSpinner.renderThread.send({
+				msg: message,
+				spinId: this.spinnerId,
+				reqId: id,
+			});
+			return;
+		}
+		return new Promise((resolve) => {
+			ThreadSpinner.renderThread.send({
+				msg: message,
+				spinId: this.spinnerId,
+				reqId: id,
+			});
+			ThreadSpinner.renderThread.once("message", (msg: SpinnerMessageSerialized) => {
+				switch (msg.msg.type) {
+					case "Ack":
+						if (msg.reqId === id && msg.spinId === this.spinnerId) {
+							// console.log("got ack", msg.msg.type, msg.reqId);
+							resolve();
+						}
+				}
+			});
 		});
-		return id;
 	}
 }

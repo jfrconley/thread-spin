@@ -1,32 +1,33 @@
 import {ThreadSpinner} from "./threadspinner";
 import ora = require("ora");
 
-let spinner;
-let test;
-let stop;
+const spinTest = async () => {
+	let spinner;
+	let test;
+	let stop;
 
-spinner = new ThreadSpinner({
-	text: "test spinner",
-	spinner: "bouncingBall",
-});
-spinner.start();
+	spinner = new ThreadSpinner({
+		text: "test spinner",
+		spinner: "bouncingBall",
+	});
+	await spinner.start();
 
 // new ThreadSpinner("other test").start();
 // ora("test spinner").start();
 
-test = 0;
-stop = false;
+	test = 0;
+	stop = false;
 
-while (!stop) {
-	test += 0.01;
-	// spinner.text = test + "";
-	if (test >= 9999999) {
-		stop = true;
-		spinner.succeed("yay");
+	while (!stop) {
+		test += 0.01;
+		// spinner.text = test + "";
+		if (test >= 9999999) {
+			stop = true;
+			await spinner.succeed("yay");
+		}
 	}
-}
 
-spinner.start("test spinner 2");
+	await spinner.start("test spinner 2");
 // spinner = new ThreadSpinner({
 // 	text: "test spinner 2",
 // });
@@ -35,18 +36,18 @@ spinner.start("test spinner 2");
 // new ThreadSpinner("other test").start();
 // ora("test spinner").start();
 
-test = 0;
-stop = false;
+	test = 0;
+	stop = false;
 
-while (!stop) {
-	test += 0.01;
-	if (test >= 9999999) {
-		stop = true;
-		spinner.succeed("yay");
+	while (!stop) {
+		test += 0.01;
+		if (test >= 9999999) {
+			stop = true;
+			await spinner.succeed("yay");
+		}
 	}
-}
 
-spinner.start("test spinner 3");
+	await spinner.start("test spinner 3");
 // spinner = new ThreadSpinner({
 // 	text: "test spinner 3",
 // 	spinner: "earth",
@@ -56,13 +57,18 @@ spinner.start("test spinner 3");
 // new ThreadSpinner("other test").start();
 // ora("test spinner").start();
 
-test = 0;
-stop = false;
+	test = 0;
+	stop = false;
 
-while (!stop) {
-	test += 0.01;
-	if (test >= 9999999) {
-		stop = true;
-		spinner.succeed("yay");
+	while (!stop) {
+		test += 0.01;
+		if (test >= 9999999) {
+			stop = true;
+			await spinner.succeed("yay");
+		}
 	}
-}
+
+	ThreadSpinner.shutdown();
+};
+
+spinTest();
