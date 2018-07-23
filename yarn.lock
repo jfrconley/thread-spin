@@ -286,6 +286,14 @@ thread-spin@^1.0.0:
     hyperid "^1.4.1"
     ora "^3.0.0"
 
+thread-spin@^1.0.1:
+  version "1.0.1"
+  resolved "https://npm.modoapi.com/thread-spin/-/thread-spin-1.0.1.tgz#f63c3cc15209603eb4e50df056f4672415d61571"
+  dependencies:
+    hyperid "^1.4.1"
+    ora "^3.0.0"
+    thread-spin "^1.0.0"
+
 tslib@^1.8.0, tslib@^1.8.1:
   version "1.9.3"
   resolved "https://npm.modoapi.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
