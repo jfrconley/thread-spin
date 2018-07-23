@@ -7,7 +7,7 @@
     "target": "esnext",
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "declaration": false,
+    "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
