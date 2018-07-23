@@ -126,15 +126,17 @@ export class ThreadSpinner {
 				spinId: this.spinnerId,
 				reqId: id,
 			});
-			ThreadSpinner.renderThread.once("message", (msg: SpinnerMessageSerialized) => {
+			const handler = (msg: SpinnerMessageSerialized) => {
 				switch (msg.msg.type) {
 					case "Ack":
 						if (msg.reqId === id && msg.spinId === this.spinnerId) {
 							// console.log("got ack", msg.msg.type, msg.reqId);
 							resolve();
+							ThreadSpinner.renderThread.removeListener("message", handler);
 						}
 				}
-			});
+			};
+			ThreadSpinner.renderThread.on("message", handler);
 		});
 	}
 }
