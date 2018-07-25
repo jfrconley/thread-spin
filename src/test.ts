@@ -2,6 +2,7 @@ import {ThreadSpinner} from "./threadspinner";
 import ora = require("ora");
 
 const spinTest = async () => {
+	const NUM = 999999;
 	let spinner;
 	let test;
 	let stop;
@@ -9,7 +10,7 @@ const spinTest = async () => {
 	spinner = new ThreadSpinner({
 		text: "test spinner",
 		spinner: "bouncingBall",
-	});
+	}, true);
 	await spinner.start();
 
 // new ThreadSpinner("other test").start();
@@ -21,7 +22,7 @@ const spinTest = async () => {
 	while (!stop) {
 		test += 0.01;
 		// spinner.text = test + "";
-		if (test >= 9999999) {
+		if (test >= NUM) {
 			stop = true;
 			await spinner.succeed("yay");
 		}
@@ -41,7 +42,7 @@ const spinTest = async () => {
 
 	while (!stop) {
 		test += 0.01;
-		if (test >= 9999999) {
+		if (test >= NUM) {
 			stop = true;
 			await spinner.succeed("yay");
 		}
@@ -62,7 +63,7 @@ const spinTest = async () => {
 
 	while (!stop) {
 		test += 0.01;
-		if (test >= 9999999) {
+		if (test >= NUM) {
 			stop = true;
 			await spinner.succeed("yay");
 		}

@@ -3,7 +3,7 @@ import {SpinnerMessageSerialized} from "./types";
 
 const spinners: {[id: string]: any} = {};
 
-function handleMessage(msg: SpinnerMessageSerialized) {
+export function handleMessage(msg: SpinnerMessageSerialized, ack: boolean = true) {
 	switch (msg.msg.type) {
 		case "Create":
 			spinners[msg.spinId] = ora(msg.msg.body);
@@ -36,7 +36,7 @@ function handleMessage(msg: SpinnerMessageSerialized) {
 			spinners[msg.spinId].text = msg.msg.body;
 			break;
 	}
-	if (msg.msg.type !== "Create") {
+	if (msg.msg.type !== "Create" && ack) {
 		msg.msg.type = "Ack";
 		delete msg.msg.body;
 		process.send(msg);

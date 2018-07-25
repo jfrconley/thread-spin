@@ -12,23 +12,19 @@ export class ThreadSpinner {
 	private static runningSpinners: number = 0;
 	private static uuid = hyperid();
 	private static renderThread: child_process.ChildProcess;
-	private static checkClose() {
-		setTimeout(() => {
-			if ((process as any)._getActiveHandles().length === 5 && ThreadSpinner.runningSpinners === 0) {
-				ThreadSpinner.shutdown();
-			} else {
-				ThreadSpinner.checkClose();
-			}
-		}, 500);
-	}
 	private options: Options;
 	private spinnerId = ThreadSpinner.uuid();
 	private currentText: string;
+	private localHandle: any = null;
 
-	constructor(options?: Options | string) {
-		if (ThreadSpinner.renderThread == null) {
+	constructor(options?: Options | string, private noThread: boolean = false) {
+		if (ThreadSpinner.renderThread == null && !this.noThread) {
 			ThreadSpinner.renderThread = child_process.fork(join(__dirname, "worker.js"), ["IS_SPINNER_CHILD"]);
 			// ThreadSpinner.checkClose();
+		}
+
+		if (this.noThread) {
+			this.localHandle = require("./worker").handleMessage;
 		}
 		this.send({
 			type: "Create",
@@ -112,6 +108,15 @@ export class ThreadSpinner {
 	private send(message: SpinnerMessage): Promise<void> {
 		const id = ThreadSpinner.uuid();
 		// console.log("sent", message.type, id);
+		if (this.noThread) {
+			this.localHandle({
+				msg: message,
+				spinId: this.spinnerId,
+				reqId: id,
+			}, false);
+			return Promise.resolve();
+		}
+
 		if (message.type === "Create") {
 			ThreadSpinner.renderThread.send({
 				msg: message,
