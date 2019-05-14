@@ -12,12 +12,13 @@ export class ThreadSpinner {
 	private static runningSpinners: number = 0;
 	private static uuid = hyperid();
 	private static renderThread: child_process.ChildProcess;
+	private startTime = Date.now();
 	private options: Options;
 	private spinnerId = ThreadSpinner.uuid();
 	private currentText: string;
 	private localHandle: any = null;
 
-	constructor(options?: Options | string, private noThread: boolean = false) {
+	constructor(options?: Options | string, private noThread: boolean = false, private includeTime = false) {
 		if (ThreadSpinner.renderThread == null && !this.noThread) {
 			ThreadSpinner.renderThread = child_process.fork(join(__dirname, "worker.js"), ["IS_SPINNER_CHILD"]);
 			// ThreadSpinner.checkClose();
@@ -45,61 +46,64 @@ export class ThreadSpinner {
 		});
 	}
 
-	public async start(text?: string) {
+	public start(text?: string) {
+		this.startTime = Date.now();
 		this.currentText = text;
 		ThreadSpinner.runningSpinners++;
-		await this.send({
+		return this.send({
 			type: "Start",
 			body: text,
 		});
 	}
 
-	public async succeed(text?: string) {
-		this.currentText = text;
+	public succeed(text: string = this.currentText, includeTime = this.includeTime) {
+		const withTime = (includeTime) ? this.getTimeText(text) : text;
+		this.currentText = withTime;
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Succeed",
-			body: text,
+			body: withTime,
 		});
 	}
 
-	public async stop() {
+	public stop() {
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Stop",
 		});
 	}
 
-	public async fail(text?: string) {
-		this.currentText = text;
+	public fail(text: string = this.currentText, includeTime = this.includeTime) {
+		const withTime = (includeTime) ? this.getTimeText(text) : text;
+		this.currentText = withTime;
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Fail",
-			body: text,
+			body: withTime,
 		});
 	}
 
-	public async info(text?: string) {
+	public info(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Info",
 			body: text,
 		});
 	}
 
-	public async warn(text?: string) {
+	public warn(text?: string) {
 		this.currentText = text;
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Warn",
 			body: text,
 		});
 	}
 
-	public async persist(options?: PersistOptions) {
+	public persist(options?: PersistOptions) {
 		ThreadSpinner.runningSpinners--;
-		await this.send({
+		return this.send({
 			type: "Persist",
 			body: options,
 		});
@@ -143,5 +147,10 @@ export class ThreadSpinner {
 			};
 			ThreadSpinner.renderThread.on("message", handler);
 		});
+	}
+
+	private getTimeText(text: string) {
+		const end = Date.now();
+		return `${text} (${(end - this.startTime)}ms)`;
 	}
 }

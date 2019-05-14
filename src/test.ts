@@ -9,8 +9,8 @@ const spinTest = async () => {
 
 	spinner = new ThreadSpinner({
 		text: "test spinner",
-		spinner: "bouncingBall",
-	}, true);
+		// spinner: "bouncingBall",
+	}, false, true);
 	await spinner.start();
 
 // new ThreadSpinner("other test").start();
@@ -40,6 +40,7 @@ const spinTest = async () => {
 	test = 0;
 	stop = false;
 
+	await spinner.warn("blah");
 	while (!stop) {
 		test += 0.01;
 		if (test >= NUM) {
@@ -65,7 +66,7 @@ const spinTest = async () => {
 		test += 0.01;
 		if (test >= NUM) {
 			stop = true;
-			await spinner.succeed("yay");
+			await spinner.fail("yay");
 		}
 	}
 

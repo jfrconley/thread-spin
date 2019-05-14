@@ -1,6 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "incremental": true,
     "experimentalDecorators": true,
     "pretty": false,
     "module": "commonjs",
